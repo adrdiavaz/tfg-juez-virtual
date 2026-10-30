@@ -1,0 +1,6 @@
+docs/
+memoria/
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
