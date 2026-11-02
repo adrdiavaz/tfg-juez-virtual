@@ -1,0 +1,50 @@
+name: Frontend
+
+on:
+  push:
+    branches: [main]
+    paths: [frontend/**, .github/workflows/frontend.yml]
+  pull_request:
+    paths: [frontend/**, .github/workflows/frontend.yml]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: frontend
+
+jobs:
+  check:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: "Lint (oxlint)", run: "pnpm lint" }
+          - { name: "Formato (prettier)", run: "pnpm format:check" }
+          - { name: "Tipos (tsc)", run: "pnpm typecheck" }
+          - {
+              name: "Tests unitarios y cobertura (vitest)",
+              run: "pnpm test run --coverage",
+            }
+          - { name: "Build (vite)", run: "pnpm build" }
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5
+        with:
+          package_json_file: frontend/package.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+      - name: ${{ matrix.name }}
+        run: ${{ matrix.run }}
