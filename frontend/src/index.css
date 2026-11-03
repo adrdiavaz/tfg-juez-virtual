@@ -1,31 +1,237 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
-/* Esquema «Académico» (DD-11): tokens semánticos con valores para modo claro y oscuro */
+/*
+ * Esquema «Académico» (DD-11). Fuente: Penpot «Juez Virtual» → sets de tokens
+ * academico/claro y academico/oscuro. El modo oscuro sigue prefers-color-scheme
+ * (la variante `dark:` de Tailwind v4 usa esa misma media query).
+ */
 :root {
-  --primary: #1d4e89;
-  --accent: #9a6700;
-  --background: #ffffff;
-  --foreground: #1a1c1f;
   color-scheme: light dark;
+
+  /* Nombres de shadcn */
+  --background: #f7f8fa;
+  --foreground: #1b2430;
+  --card: #ffffff;
+  --card-foreground: #1b2430;
+  --popover: #ffffff;
+  --popover-foreground: #1b2430;
+  --primary: #1d4e89;
+  --primary-foreground: #ffffff;
+  --secondary: #eef1f5;
+  --secondary-foreground: #1b2430;
+  --muted: #eef1f5;
+  --muted-foreground: #5b6675;
+  --accent: #e6eef8; /* en shadcn: fondo hover/seleccionado = primary-soft */
+  --accent-foreground: #1d4e89;
+  --destructive: #a51d24;
+  --border: #dde2e9;
+  --input: #c9d0da;
+  --ring: #1d4e89;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1b2430;
+  --sidebar-primary: #1d4e89;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e6eef8;
+  --sidebar-accent-foreground: #1d4e89;
+  --sidebar-border: #dde2e9;
+  --sidebar-ring: #1d4e89;
+
+  /* Propios del sistema de diseño */
+  --primary-hover: #163d6b;
+  --primary-soft: #e6eef8;
+  --placeholder: #8a94a3;
+  --destructive-soft: #fbe5e5;
+  --success: #146c2e;
+  --success-soft: #e3f4e8;
+  --warning: #9a6700; /* acento ámbar */
+  --warning-soft: #fdf3d9;
+  --warning-text: #7a5200;
+  --warning-strong: #5c3e00;
+  --warning-border: #eed9a6;
+  --study: #0f6b5c;
+  --study-soft: #e6f4f1;
+  --table-header: #f1f4f8;
+  --avatar: #dce6f3;
+  --step-idle: #e3e7ed;
+  --code: #f3f5f8;
+  --overlay: #0f1620;
+  --brand-panel-foreground: #c9d8ec;
+
+  /* Veredictos y estados de evaluación (siempre con icono y texto) */
+  --verdict-ok-bg: #e3f4e8;
+  --verdict-ok-fg: #146c2e;
+  --verdict-wa-bg: #fbe5e5;
+  --verdict-wa-fg: #a51d24;
+  --verdict-ce-bg: #fdf0d5;
+  --verdict-ce-fg: #8a5300;
+  --verdict-re-bg: #fce8f1;
+  --verdict-re-fg: #9c1f5e;
+  --verdict-tle-bg: #ede7fb;
+  --verdict-tle-fg: #5b34b0;
+  --verdict-mle-bg: #e4eefb;
+  --verdict-mle-fg: #1e55a8;
+  --verdict-pending-bg: #eef0f3;
+  --verdict-pending-fg: #4a5563;
+  --verdict-error-bg: #eef0f3;
+  --verdict-error-fg: #4a5563;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --background: #0f1620;
+    --foreground: #e6ecf3;
+    --card: #172130;
+    --card-foreground: #e6ecf3;
+    --popover: #172130;
+    --popover-foreground: #e6ecf3;
     --primary: #5b9be0;
-    --accent: #f2b92b;
-    --background: #121418;
-    --foreground: #e8eaee;
+    --primary-foreground: #0b1420;
+    --secondary: #1e2a3b;
+    --secondary-foreground: #e6ecf3;
+    --muted: #1e2a3b;
+    --muted-foreground: #9aa7b6;
+    --accent: #1a2e48;
+    --accent-foreground: #5b9be0;
+    --destructive: #f59a9e;
+    --border: #2a3647;
+    --input: #3a4759;
+    --ring: #5b9be0;
+    --sidebar: #172130;
+    --sidebar-foreground: #e6ecf3;
+    --sidebar-primary: #5b9be0;
+    --sidebar-primary-foreground: #0b1420;
+    --sidebar-accent: #1a2e48;
+    --sidebar-accent-foreground: #5b9be0;
+    --sidebar-border: #2a3647;
+    --sidebar-ring: #5b9be0;
+
+    --primary-hover: #7bb0ea;
+    --primary-soft: #1a2e48;
+    --placeholder: #6f7c8d;
+    --destructive-soft: #3d1517;
+    --success: #7bd69a;
+    --success-soft: #12341f;
+    --warning: #f2b92b;
+    --warning-soft: #3a2e10;
+    --warning-text: #f2c766;
+    --warning-strong: #f7d58a;
+    --warning-border: #5a4615;
+    --study: #7dd3c0;
+    --study-soft: #123430;
+    --table-header: #1b2636;
+    --avatar: #22385a;
+    --step-idle: #2a3647;
+    --code: #111a26;
+    --overlay: #000000;
+    --brand-panel-foreground: #c9d8ec;
+
+    --verdict-ok-bg: #12341f;
+    --verdict-ok-fg: #7bd69a;
+    --verdict-wa-bg: #3d1517;
+    --verdict-wa-fg: #f59a9e;
+    --verdict-ce-bg: #3a2a0a;
+    --verdict-ce-fg: #f2c266;
+    --verdict-re-bg: #3a1528;
+    --verdict-re-fg: #f49ac4;
+    --verdict-tle-bg: #261c45;
+    --verdict-tle-fg: #b9a3f5;
+    --verdict-mle-bg: #13284a;
+    --verdict-mle-fg: #93bbf2;
+    --verdict-pending-bg: #262b33;
+    --verdict-pending-fg: #b4bcc8;
+    --verdict-error-bg: #262b33;
+    --verdict-error-fg: #b4bcc8;
   }
 }
 
-/* inline: las utilidades (bg-primary, text-accent…) leen la variable y cambian con el modo */
+/* inline: las utilidades (bg-primary, text-warning…) leen la variable y cambian con el modo */
 @theme inline {
-  --color-primary: var(--primary);
-  --color-accent: var(--accent);
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+
+  --text-title: 1.75rem; /* Título 28/600 */
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-placeholder: var(--placeholder);
+  --color-destructive-soft: var(--destructive-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-warning-text: var(--warning-text);
+  --color-warning-strong: var(--warning-strong);
+  --color-warning-border: var(--warning-border);
+  --color-study: var(--study);
+  --color-study-soft: var(--study-soft);
+  --color-table-header: var(--table-header);
+  --color-avatar: var(--avatar);
+  --color-step-idle: var(--step-idle);
+  --color-code: var(--code);
+  --color-overlay: var(--overlay);
+  --color-brand-panel-foreground: var(--brand-panel-foreground);
+
+  --color-verdict-ok-bg: var(--verdict-ok-bg);
+  --color-verdict-ok-fg: var(--verdict-ok-fg);
+  --color-verdict-wa-bg: var(--verdict-wa-bg);
+  --color-verdict-wa-fg: var(--verdict-wa-fg);
+  --color-verdict-ce-bg: var(--verdict-ce-bg);
+  --color-verdict-ce-fg: var(--verdict-ce-fg);
+  --color-verdict-re-bg: var(--verdict-re-bg);
+  --color-verdict-re-fg: var(--verdict-re-fg);
+  --color-verdict-tle-bg: var(--verdict-tle-bg);
+  --color-verdict-tle-fg: var(--verdict-tle-fg);
+  --color-verdict-mle-bg: var(--verdict-mle-bg);
+  --color-verdict-mle-fg: var(--verdict-mle-fg);
+  --color-verdict-pending-bg: var(--verdict-pending-bg);
+  --color-verdict-pending-fg: var(--verdict-pending-fg);
+  --color-verdict-error-bg: var(--verdict-error-bg);
+  --color-verdict-error-fg: var(--verdict-error-fg);
 }
 
-body {
-  @apply bg-background text-foreground;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-sm text-foreground;
+  }
 }
