@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ComponentesRouteImport } from './routes/componentes'
+import { Route as PocEjecucionRouteImport } from './routes/poc/ejecucion'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,40 @@ const ComponentesRoute = ComponentesRouteImport.update({
   path: '/componentes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PocEjecucionRoute = PocEjecucionRouteImport.update({
+  id: '/poc/ejecucion',
+  path: '/poc/ejecucion',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/componentes': typeof ComponentesRoute
+  '/poc/ejecucion': typeof PocEjecucionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/componentes': typeof ComponentesRoute
+  '/poc/ejecucion': typeof PocEjecucionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/componentes': typeof ComponentesRoute
+  '/poc/ejecucion': typeof PocEjecucionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/componentes'
+  fullPaths: '/' | '/componentes' | '/poc/ejecucion'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/componentes'
-  id: '__root__' | '/' | '/componentes'
+  to: '/' | '/componentes' | '/poc/ejecucion'
+  id: '__root__' | '/' | '/componentes' | '/poc/ejecucion'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ComponentesRoute: typeof ComponentesRoute
+  PocEjecucionRoute: typeof PocEjecucionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ComponentesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/poc/ejecucion': {
+      id: '/poc/ejecucion'
+      path: '/poc/ejecucion'
+      fullPath: '/poc/ejecucion'
+      preLoaderRoute: typeof PocEjecucionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ComponentesRoute: ComponentesRoute,
+  PocEjecucionRoute: PocEjecucionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
