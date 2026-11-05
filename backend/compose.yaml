@@ -1,0 +1,12 @@
+services:
+  go-judge:
+    build: ./docker/go-judge
+    # go-judge crea namespaces/cgroups y no arranca sin privilegios.
+    privileged: true
+    shm_size: 256m
+    environment:
+      ES_HTTP_ADDR: ":5050"
+      ES_AUTH_TOKEN: ${GO_JUDGE_AUTH_TOKEN:-}
+    # Solo en localhost: el servicio ejecuta código arbitrario.
+    ports:
+      - "127.0.0.1:5050:5050"
