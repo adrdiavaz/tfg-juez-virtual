@@ -22,6 +22,19 @@ jobs:
   check:
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql+psycopg://juez:juez@localhost:5432/juez_virtual
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: juez
+          POSTGRES_PASSWORD: juez
+          POSTGRES_DB: juez_virtual
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U juez -d juez_virtual"
+          --health-interval 5s --health-timeout 3s --health-retries 10
     strategy:
       fail-fast: false
       matrix:
@@ -34,7 +47,7 @@ jobs:
           - { name: "Tipos (pyright)", run: "uv run pyright" }
           - {
               name: "Tests unitarios y cobertura (pytest)",
-              run: "uv run pytest --cov=app --cov-report=term-missing",
+              run: "uv run alembic upgrade head && uv run pytest --cov=app --cov-report=term-missing",
             }
           - { name: "Build del paquete (uv build)", run: "uv build" }
     steps:

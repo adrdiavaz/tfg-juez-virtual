@@ -11,9 +11,7 @@ class AuthSession(Base):
     __tablename__ = "sessions"
 
     token_hash: Mapped[str] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), index=True
-    )
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 
@@ -26,9 +24,7 @@ class AccountToken(Base):
     __tablename__ = "account_tokens"
 
     token_hash: Mapped[str] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), index=True
-    )
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     type: Mapped[TokenType] = mapped_column(str_enum(TokenType, "type"))
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

@@ -22,9 +22,7 @@ class AccountStatus(StrEnum):
 class User(Base):
     __tablename__ = "users"
     __table_args__ = (
-        CheckConstraint(
-            "status <> 'active' OR password_hash IS NOT NULL", "active_has_password"
-        ),
+        CheckConstraint("status <> 'active' OR password_hash IS NOT NULL", "active_has_password"),
         CheckConstraint(
             "status = 'disabled' OR previous_status IS NULL",
             "previous_only_if_disabled",
@@ -51,9 +49,7 @@ class User(Base):
     registered_by_id: Mapped[int | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL")
     )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     uvus: Mapped[str | None] = mapped_column(unique=True)
     linked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
