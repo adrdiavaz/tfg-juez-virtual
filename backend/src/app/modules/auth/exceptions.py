@@ -14,3 +14,13 @@ class AccountPending(HTTPException):
 class AccountDisabled(HTTPException):
     def __init__(self) -> None:
         super().__init__(status.HTTP_403_FORBIDDEN, {"code": "account_disabled"})
+
+
+class NotAuthenticated(HTTPException):
+    def __init__(self) -> None:
+        super().__init__(status.HTTP_401_UNAUTHORIZED, {"code": "not_authenticated"})
+
+
+class Forbidden(HTTPException):
+    def __init__(self) -> None:
+        super().__init__(status.HTTP_403_FORBIDDEN, {"code": "forbidden"})

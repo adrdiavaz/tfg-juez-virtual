@@ -44,9 +44,16 @@ async def test_each_role_only_reaches_its_own_routes(
 
     response = await client.get(ROUTES[target])
 
-    assert response.status_code == (200 if role is target else 403)
+    if role is target:
+        assert response.status_code == 200
+    else:
+        assert response.status_code == 403
+        assert response.json()["detail"]["code"] == "forbidden"
 
 
 @pytest.mark.parametrize("path", ROUTES.values())
 async def test_routes_require_a_session(client: AsyncClient, path: str) -> None:
-    assert (await client.get(path)).status_code == 401
+    response = await client.get(path)
+
+    assert response.status_code == 401
+    assert response.json()["detail"]["code"] == "not_authenticated"
