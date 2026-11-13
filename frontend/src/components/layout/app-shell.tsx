@@ -9,6 +9,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { toast } from 'sonner'
 import { useLogoutAuthLogoutPost } from '@/api/generated/auth/auth'
 import type { Role, UserPublic } from '@/api/generated/model'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -56,10 +57,12 @@ export function AppShell({
   const current = items.find((item) => pathname.startsWith(item.to))
   const logout = useLogoutAuthLogoutPost({
     mutation: {
-      onSettled: () => {
+      onSuccess: () => {
         queryClient.clear()
         navigate({ to: '/login' })
       },
+      onError: () =>
+        toast.error('No se pudo cerrar la sesión. Inténtalo de nuevo.'),
     },
   })
 
