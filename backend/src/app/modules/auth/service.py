@@ -25,13 +25,13 @@ class AuthService:
 
     async def authenticate(self, credential: str, password: str) -> User:
         user = await self.users.get_by_credential(credential.strip())
+        if user and user.status is AccountStatus.PENDING:
+            raise AccountPending()
         stored_hash = user.password_hash if user and user.password_hash else None
         is_valid = verify_password(password, stored_hash or DUMMY_HASH)
 
         if user is None or stored_hash is None or not is_valid:
             raise InvalidCredentials()
-        if user.status is AccountStatus.PENDING:
-            raise AccountPending()
         if user.status is AccountStatus.DISABLED:
             raise AccountDisabled()
         return user

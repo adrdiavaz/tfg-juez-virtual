@@ -54,6 +54,11 @@ async def test_pending_account_is_rejected() -> None:
         await make_service(make_user(AccountStatus.PENDING)).authenticate("u", PASSWORD)
 
 
+async def test_pending_account_is_rejected_with_any_password() -> None:
+    with pytest.raises(AccountPending):
+        await make_service(make_user(AccountStatus.PENDING)).authenticate("u", "wrong")
+
+
 async def test_disabled_account_is_rejected() -> None:
     with pytest.raises(AccountDisabled):
         await make_service(make_user(AccountStatus.DISABLED)).authenticate("u", PASSWORD)

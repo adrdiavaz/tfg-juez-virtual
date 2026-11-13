@@ -41,19 +41,19 @@ async def test_pending_account_cannot_log_in(client: AsyncClient, make_user: Mak
 
     response = await login(client, user.username)
 
-    # A pending account has a password in this test, so the status is revealed
     assert response.status_code == 403
     assert response.json()["detail"]["code"] == "account_pending"
 
 
-async def test_pending_account_without_password_is_not_distinguishable(
+async def test_pending_account_without_password_is_told_to_activate(
     client: AsyncClient, make_user: MakeUser
 ) -> None:
     user = await make_user(status=AccountStatus.PENDING, password=None)
 
-    response = await login(client, user.username)
+    response = await login(client, user.username, "anything")
 
-    assert response.status_code == 401
+    assert response.status_code == 403
+    assert response.json()["detail"]["code"] == "account_pending"
 
 
 async def test_disabled_account_cannot_log_in(client: AsyncClient, make_user: MakeUser) -> None:
@@ -74,7 +74,10 @@ async def test_password_is_stored_hashed(make_user: MakeUser) -> None:
 
 
 async def test_me_requires_a_session(client: AsyncClient) -> None:
-    assert (await client.get("/auth/me")).status_code == 401
+    response = await client.get("/auth/me")
+
+    assert response.status_code == 401
+    assert response.json()["detail"]["code"] == "not_authenticated"
 
 
 async def test_logout_invalidates_the_session(client: AsyncClient, make_user: MakeUser) -> None:
