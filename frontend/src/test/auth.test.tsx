@@ -6,10 +6,20 @@ import {
   createRouter,
   RouterProvider,
 } from '@tanstack/react-router'
-import { AxiosError, type AxiosRequestConfig, type AxiosResponse } from 'axios'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  AxiosError,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+  type InternalAxiosRequestConfig,
+} from 'axios'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { UserPublic } from '@/api/generated/model'
 import { routeTree } from '../routeTree.gen'
+import {
+  queryClient as appQueryClient,
+  redirectOnUnauthorized,
+  router as appRouter,
+} from '../router'
 
 const student: UserPublic = {
   id: 1,
@@ -19,20 +29,27 @@ const student: UserPublic = {
   role: 'student',
 }
 
-const httpError = (status: number, data?: unknown) =>
-  new AxiosError('error', undefined, undefined, undefined, {
-    status,
-    data,
-  } as AxiosResponse)
+const httpError = (status: number, data?: unknown, url?: string) =>
+  new AxiosError(
+    'error',
+    undefined,
+    { url } as InternalAxiosRequestConfig,
+    undefined,
+    { status, data } as AxiosResponse,
+  )
 
 let session: UserPublic | null
 let loginResult: UserPublic | AxiosError
+let meError: AxiosError | null
+let logoutFails: boolean
 const requests: string[] = []
 
 vi.mock('@/api/client', () => ({
+  axiosInstance: { interceptors: { response: { use: vi.fn() } } },
   apiClient: async (config: AxiosRequestConfig) => {
     requests.push(`${config.method} ${config.url}`)
     if (config.url === '/auth/me') {
+      if (meError) throw meError
       if (!session) throw httpError(401)
       return session
     }
@@ -42,6 +59,7 @@ vi.mock('@/api/client', () => ({
       return loginResult
     }
     if (config.url === '/auth/logout') {
+      if (logoutFails) throw httpError(500)
       session = null
       return undefined
     }
@@ -74,6 +92,8 @@ async function logIn() {
 beforeEach(() => {
   session = null
   loginResult = student
+  meError = null
+  logoutFails = false
   requests.length = 0
 })
 
@@ -133,5 +153,54 @@ describe('autenticación', () => {
       await screen.findByRole('heading', { name: 'Inicia sesión' }),
     ).toBeInTheDocument()
     expect(requests).toContain('POST /auth/logout')
+  })
+
+  it('si falla Salir, avisa y no abandona la vista', async () => {
+    session = student
+    logoutFails = true
+    const router = renderAt('/student')
+    await userEvent.click(await screen.findByRole('button', { name: /salir/i }))
+
+    expect(
+      await screen.findByText(/No se pudo cerrar la sesión/),
+    ).toBeInTheDocument()
+    expect(router.state.location.pathname).toBe('/student')
+  })
+
+  it('un error del servidor al comprobar la sesión no lleva al inicio de sesión', async () => {
+    meError = httpError(500)
+    const router = renderAt('/student')
+
+    expect(await screen.findByText(/something went wrong/i)).toBeInTheDocument()
+    expect(router.state.location.pathname).toBe('/student')
+  })
+})
+
+describe('redirectOnUnauthorized', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('un 401 fuera de /auth/ limpia la caché y vuelve al inicio de sesión', async () => {
+    const navigate = vi.spyOn(appRouter, 'navigate').mockResolvedValue()
+    const clear = vi.spyOn(appQueryClient, 'clear')
+
+    await expect(
+      redirectOnUnauthorized(httpError(401, undefined, '/teacher/activities')),
+    ).rejects.toBeInstanceOf(AxiosError)
+    expect(clear).toHaveBeenCalled()
+    expect(navigate).toHaveBeenCalledWith({ to: '/login' })
+  })
+
+  it.each([
+    [401, '/auth/me'],
+    [403, '/teacher/activities'],
+  ])('un %i en %s no redirige', async (status, url) => {
+    const navigate = vi.spyOn(appRouter, 'navigate').mockResolvedValue()
+
+    await expect(
+      redirectOnUnauthorized(httpError(status, undefined, url)),
+    ).rejects.toBeInstanceOf(AxiosError)
+    expect(navigate).not.toHaveBeenCalled()
   })
 })

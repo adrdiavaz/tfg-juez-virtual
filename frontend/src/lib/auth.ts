@@ -21,7 +21,10 @@ export const meQueryOptions = getMeAuthMeGetQueryOptions({
 })
 
 export const getSession = (queryClient: QueryClient) =>
-  queryClient.query(meQueryOptions).catch(() => null)
+  queryClient.query(meQueryOptions).catch((error: unknown) => {
+    if (isAxiosError(error) && error.response?.status === 401) return null
+    throw error
+  })
 
 export const requireRole =
   (role: Role) =>
