@@ -88,7 +88,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
-export const Route = createFileRoute('/componentes')({
+export const Route = createFileRoute('/components')({
   component: Componentes,
 })
 
