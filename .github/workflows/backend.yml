@@ -51,7 +51,7 @@ jobs:
             }
           - { name: "Build del paquete (uv build)", run: "uv build" }
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: "3.13"
