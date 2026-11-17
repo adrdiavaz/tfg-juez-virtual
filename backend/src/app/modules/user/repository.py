@@ -18,3 +18,6 @@ class UserRepository:
                 )
             )
         )
+
+    async def get(self, user_id: int) -> User | None:
+        return await self.db.get(User, user_id)

@@ -1,6 +1,7 @@
 import type { QueryClient } from '@tanstack/react-query'
 import { redirect } from '@tanstack/react-router'
 import { isAxiosError } from 'axios'
+import { z } from 'zod'
 import { getMeAuthMeGetQueryOptions } from '@/api/generated/auth/auth'
 import type { Role, UserPublic } from '@/api/generated/model'
 
@@ -60,3 +61,11 @@ export function loginError(error: unknown) {
         message: 'No se pudo iniciar sesión. Inténtalo de nuevo más tarde.',
       }
 }
+
+export const passwordSchema = z
+  .string()
+  .min(8, 'La contraseña debe tener al menos 8 caracteres.')
+  .max(128, 'La contraseña no puede superar los 128 caracteres.')
+
+export const isInvalidLink = (error: unknown) =>
+  isAxiosError(error) && error.response?.data?.detail?.code === 'invalid_link'

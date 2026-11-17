@@ -5,6 +5,7 @@ from fastapi import Cookie, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.database import get_session
+from app.integrations.email.sender import EmailSender, get_email_sender
 from app.modules.auth.exceptions import Forbidden, NotAuthenticated
 from app.modules.auth.repository import AuthRepository
 from app.modules.auth.service import AuthService
@@ -16,8 +17,11 @@ SESSION_COOKIE = "session"
 SessionToken = Annotated[str | None, Cookie(alias=SESSION_COOKIE)]
 
 
-def get_auth_service(db: Annotated[AsyncSession, Depends(get_session)]) -> AuthService:
-    return AuthService(UserRepository(db), AuthRepository(db))
+def get_auth_service(
+    db: Annotated[AsyncSession, Depends(get_session)],
+    mail: Annotated[EmailSender, Depends(get_email_sender)],
+) -> AuthService:
+    return AuthService(UserRepository(db), AuthRepository(db), mail)
 
 
 async def get_current_user(

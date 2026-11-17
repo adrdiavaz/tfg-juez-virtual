@@ -16,7 +16,7 @@ def make_service(user: User | None) -> AuthService:
     users = MagicMock(spec=UserRepository)
     users.get_by_credential = AsyncMock(return_value=user)
     sessions = MagicMock(spec=AuthRepository)
-    return AuthService(users, sessions)
+    return AuthService(users, sessions, AsyncMock())
 
 
 def make_user(status: AccountStatus) -> User:

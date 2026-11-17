@@ -1,10 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { CircleAlert, Lock, Mail, Power, User } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { useLoginAuthLoginPost } from '@/api/generated/auth/auth'
+import { authCardClass } from '@/components/auth/auth-card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -68,7 +69,7 @@ export function LoginForm() {
     <form
       onSubmit={handleSubmit(onSubmit)}
       noValidate
-      className="flex w-full max-w-110 flex-col gap-5 rounded-xl border bg-card p-10"
+      className={authCardClass}
     >
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold">Inicia sesión</h1>
@@ -121,6 +122,12 @@ export function LoginForm() {
             />
           </div>
           <FieldError errors={[errors.password]} />
+          <Link
+            to="/forgot-password"
+            className="self-start text-sm font-medium text-primary"
+          >
+            ¿Has olvidado tu contraseña?
+          </Link>
         </Field>
       </FieldGroup>
 
