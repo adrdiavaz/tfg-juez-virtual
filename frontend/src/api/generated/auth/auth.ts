@@ -24,8 +24,12 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  ActivationInfo,
+  ActivationInfoAuthActivationGetParams,
   HTTPValidationError,
   LoginRequest,
+  NewPassword,
+  PasswordResetRequest,
   UserPublic
 } from '../model';
 
@@ -275,3 +279,297 @@ export function useMeAuthMeGet<TData = Awaited<ReturnType<typeof meAuthMeGet>>, 
 
 
 
+/**
+ * @summary Activation Info
+ */
+export const activationInfoAuthActivationGet = (
+    params: ActivationInfoAuthActivationGetParams,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<ActivationInfo>(
+      {url: `/auth/activation`, method: 'GET',
+        params, signal
+    },
+      options);
+    }
+
+
+
+
+export const getActivationInfoAuthActivationGetQueryKey = (params?: ActivationInfoAuthActivationGetParams,) => {
+    return [
+    `/auth/activation`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getActivationInfoAuthActivationGetQueryOptions = <TData = Awaited<ReturnType<typeof activationInfoAuthActivationGet>>, TError = HTTPValidationError>(params: ActivationInfoAuthActivationGetParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof activationInfoAuthActivationGet>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getActivationInfoAuthActivationGetQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof activationInfoAuthActivationGet>>> = ({ signal }) => activationInfoAuthActivationGet(params, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof activationInfoAuthActivationGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ActivationInfoAuthActivationGetQueryResult = NonNullable<Awaited<ReturnType<typeof activationInfoAuthActivationGet>>>
+export type ActivationInfoAuthActivationGetQueryError = HTTPValidationError
+
+
+export function useActivationInfoAuthActivationGet<TData = Awaited<ReturnType<typeof activationInfoAuthActivationGet>>, TError = HTTPValidationError>(
+ params: ActivationInfoAuthActivationGetParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof activationInfoAuthActivationGet>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof activationInfoAuthActivationGet>>,
+          TError,
+          Awaited<ReturnType<typeof activationInfoAuthActivationGet>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useActivationInfoAuthActivationGet<TData = Awaited<ReturnType<typeof activationInfoAuthActivationGet>>, TError = HTTPValidationError>(
+ params: ActivationInfoAuthActivationGetParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof activationInfoAuthActivationGet>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof activationInfoAuthActivationGet>>,
+          TError,
+          Awaited<ReturnType<typeof activationInfoAuthActivationGet>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useActivationInfoAuthActivationGet<TData = Awaited<ReturnType<typeof activationInfoAuthActivationGet>>, TError = HTTPValidationError>(
+ params: ActivationInfoAuthActivationGetParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof activationInfoAuthActivationGet>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Activation Info
+ */
+
+export function useActivationInfoAuthActivationGet<TData = Awaited<ReturnType<typeof activationInfoAuthActivationGet>>, TError = HTTPValidationError>(
+ params: ActivationInfoAuthActivationGetParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof activationInfoAuthActivationGet>>, TError, TData>>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getActivationInfoAuthActivationGetQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary Activate
+ */
+export const activateAuthActivationPost = (
+    newPassword: NewPassword,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<void>(
+      {url: `/auth/activation`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: newPassword, signal
+    },
+      options);
+    }
+
+
+
+
+export const getActivateAuthActivationPostMutationKey = () => ['activateAuthActivationPost'] as const;
+
+export const getActivateAuthActivationPostMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof activateAuthActivationPost>>, TError,ActivateAuthActivationPostMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof activateAuthActivationPost>>, TError,ActivateAuthActivationPostMutationVariables, TContext> => {
+
+const mutationKey = getActivateAuthActivationPostMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof activateAuthActivationPost>>, ActivateAuthActivationPostMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  activateAuthActivationPost(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ActivateAuthActivationPostMutationResult = NonNullable<Awaited<ReturnType<typeof activateAuthActivationPost>>>
+    export type ActivateAuthActivationPostMutationBody = NewPassword
+    export type ActivateAuthActivationPostMutationError = HTTPValidationError
+    export type ActivateAuthActivationPostMutationVariables = {data: NewPassword}
+
+    /**
+ * @summary Activate
+ */
+export const useActivateAuthActivationPost = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof activateAuthActivationPost>>, TError,ActivateAuthActivationPostMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof activateAuthActivationPost>>,
+        TError,
+        ActivateAuthActivationPostMutationVariables,
+        TContext
+      > => {
+      return useMutation(getActivateAuthActivationPostMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Request Password Reset
+ */
+export const requestPasswordResetAuthPasswordResetPost = (
+    passwordResetRequest: PasswordResetRequest,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<unknown>(
+      {url: `/auth/password-reset`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: passwordResetRequest, signal
+    },
+      options);
+    }
+
+
+
+
+export const getRequestPasswordResetAuthPasswordResetPostMutationKey = () => ['requestPasswordResetAuthPasswordResetPost'] as const;
+
+export const getRequestPasswordResetAuthPasswordResetPostMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestPasswordResetAuthPasswordResetPost>>, TError,RequestPasswordResetAuthPasswordResetPostMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof requestPasswordResetAuthPasswordResetPost>>, TError,RequestPasswordResetAuthPasswordResetPostMutationVariables, TContext> => {
+
+const mutationKey = getRequestPasswordResetAuthPasswordResetPostMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof requestPasswordResetAuthPasswordResetPost>>, RequestPasswordResetAuthPasswordResetPostMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  requestPasswordResetAuthPasswordResetPost(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RequestPasswordResetAuthPasswordResetPostMutationResult = NonNullable<Awaited<ReturnType<typeof requestPasswordResetAuthPasswordResetPost>>>
+    export type RequestPasswordResetAuthPasswordResetPostMutationBody = PasswordResetRequest
+    export type RequestPasswordResetAuthPasswordResetPostMutationError = HTTPValidationError
+    export type RequestPasswordResetAuthPasswordResetPostMutationVariables = {data: PasswordResetRequest}
+
+    /**
+ * @summary Request Password Reset
+ */
+export const useRequestPasswordResetAuthPasswordResetPost = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof requestPasswordResetAuthPasswordResetPost>>, TError,RequestPasswordResetAuthPasswordResetPostMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof requestPasswordResetAuthPasswordResetPost>>,
+        TError,
+        RequestPasswordResetAuthPasswordResetPostMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRequestPasswordResetAuthPasswordResetPostMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Confirm Password Reset
+ */
+export const confirmPasswordResetAuthPasswordResetConfirmPost = (
+    newPassword: NewPassword,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<void>(
+      {url: `/auth/password-reset/confirm`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: newPassword, signal
+    },
+      options);
+    }
+
+
+
+
+export const getConfirmPasswordResetAuthPasswordResetConfirmPostMutationKey = () => ['confirmPasswordResetAuthPasswordResetConfirmPost'] as const;
+
+export const getConfirmPasswordResetAuthPasswordResetConfirmPostMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmPasswordResetAuthPasswordResetConfirmPost>>, TError,ConfirmPasswordResetAuthPasswordResetConfirmPostMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof confirmPasswordResetAuthPasswordResetConfirmPost>>, TError,ConfirmPasswordResetAuthPasswordResetConfirmPostMutationVariables, TContext> => {
+
+const mutationKey = getConfirmPasswordResetAuthPasswordResetConfirmPostMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof confirmPasswordResetAuthPasswordResetConfirmPost>>, ConfirmPasswordResetAuthPasswordResetConfirmPostMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  confirmPasswordResetAuthPasswordResetConfirmPost(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ConfirmPasswordResetAuthPasswordResetConfirmPostMutationResult = NonNullable<Awaited<ReturnType<typeof confirmPasswordResetAuthPasswordResetConfirmPost>>>
+    export type ConfirmPasswordResetAuthPasswordResetConfirmPostMutationBody = NewPassword
+    export type ConfirmPasswordResetAuthPasswordResetConfirmPostMutationError = HTTPValidationError
+    export type ConfirmPasswordResetAuthPasswordResetConfirmPostMutationVariables = {data: NewPassword}
+
+    /**
+ * @summary Confirm Password Reset
+ */
+export const useConfirmPasswordResetAuthPasswordResetConfirmPost = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmPasswordResetAuthPasswordResetConfirmPost>>, TError,ConfirmPasswordResetAuthPasswordResetConfirmPostMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof confirmPasswordResetAuthPasswordResetConfirmPost>>,
+        TError,
+        ConfirmPasswordResetAuthPasswordResetConfirmPostMutationVariables,
+        TContext
+      > => {
+      return useMutation(getConfirmPasswordResetAuthPasswordResetConfirmPostMutationOptions(options), queryClient);
+    }

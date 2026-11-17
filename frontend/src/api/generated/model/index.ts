@@ -5,8 +5,12 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './activationInfo';
+export * from './activationInfoAuthActivationGetParams';
 export * from './hTTPValidationError';
 export * from './loginRequest';
+export * from './newPassword';
+export * from './passwordResetRequest';
 export * from './role';
 export * from './userPublic';
 export * from './validationError';
