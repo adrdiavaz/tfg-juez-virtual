@@ -24,3 +24,8 @@ class NotAuthenticated(HTTPException):
 class Forbidden(HTTPException):
     def __init__(self) -> None:
         super().__init__(status.HTTP_403_FORBIDDEN, {"code": "forbidden"})
+
+
+class InvalidLink(HTTPException):
+    def __init__(self) -> None:
+        super().__init__(status.HTTP_400_BAD_REQUEST, {"code": "invalid_link"})

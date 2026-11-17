@@ -5,8 +5,12 @@ import asyncio
 from sqlalchemy import select
 
 from app.db.database import AsyncSessionLocal, engine
+from app.integrations.email.sender import get_email_sender
+from app.modules.auth.repository import AuthRepository
 from app.modules.auth.security import hash_password
+from app.modules.auth.service import AuthService
 from app.modules.user.models import AccountStatus, Role, User
+from app.modules.user.repository import UserRepository
 
 PASSWORD = "password123"
 
@@ -38,6 +42,12 @@ async def seed() -> None:
                     status=status,
                 )
             )
+        await db.flush()
+        pending = await db.scalar(select(User).where(User.status == AccountStatus.PENDING))
+        if pending:
+            service = AuthService(UserRepository(db), AuthRepository(db), get_email_sender())
+            if not await service.send_activation(pending):
+                print("Could not send the activation email (is the SMTP server running?)")
         await db.commit()
     await engine.dispose()
 

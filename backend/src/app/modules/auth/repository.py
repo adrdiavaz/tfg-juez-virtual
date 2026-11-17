@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.auth.models import AuthSession
+from app.modules.auth.models import AccountToken, AuthSession, TokenType
 from app.modules.user.models import AccountStatus, User
 
 
@@ -28,3 +28,27 @@ class AuthRepository:
                 User.status == AccountStatus.ACTIVE,
             )
         )
+
+    async def add_token(self, token: AccountToken) -> None:
+        self.db.add(token)
+        await self.db.flush()
+
+    async def get_valid_token(
+        self, token_hash: str, type: TokenType, now: datetime
+    ) -> AccountToken | None:
+        token = await self.db.scalar(
+            select(AccountToken)
+            .where(AccountToken.token_hash == token_hash, AccountToken.type == type)
+            .with_for_update()
+        )
+        return token if token and token.is_valid(now) else None
+
+    async def invalidate_tokens(self, user_id: int, type: TokenType) -> None:
+        await self.db.execute(
+            update(AccountToken)
+            .where(AccountToken.user_id == user_id, AccountToken.type == type)
+            .values(invalidated=True)
+        )
+
+    async def delete_user_sessions(self, user_id: int) -> None:
+        await self.db.execute(delete(AuthSession).where(AuthSession.user_id == user_id))
