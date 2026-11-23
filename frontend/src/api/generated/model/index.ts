@@ -7,9 +7,16 @@
 
 export * from './ejecucionPeticion';
 export * from './ejecucionRespuesta';
+export * from './framework';
 export * from './hTTPValidationError';
 export * from './language';
+export * from './outcome';
+export * from './pruebasPeticion';
+export * from './pruebasPeticionTests';
+export * from './pruebasRespuesta';
 export * from './resultadoComando';
+export * from './resultadoPrueba';
 export * from './status';
 export * from './validationError';
 export * from './validationErrorCtx';
+export * from './veredicto';

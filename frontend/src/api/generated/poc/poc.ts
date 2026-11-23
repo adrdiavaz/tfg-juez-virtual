@@ -17,7 +17,9 @@ import type {
 import type {
   EjecucionPeticion,
   EjecucionRespuesta,
-  HTTPValidationError
+  HTTPValidationError,
+  PruebasPeticion,
+  PruebasRespuesta
 } from '../model';
 
 import { apiClient } from '../../client';
@@ -93,4 +95,71 @@ export const useEjecutarPocEjecucionesPost = <TError = HTTPValidationError,
         TContext
       > => {
       return useMutation(getEjecutarPocEjecucionesPostMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Ejecutar Pruebas
+ */
+export const ejecutarPruebasPocPruebasPost = (
+    pruebasPeticion: PruebasPeticion,
+ options?: SecondParameter<typeof apiClient>,signal?: AbortSignal
+) => {
+
+
+      return apiClient<PruebasRespuesta>(
+      {url: `/poc/pruebas`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: pruebasPeticion, signal
+    },
+      options);
+    }
+
+
+
+
+export const getEjecutarPruebasPocPruebasPostMutationKey = () => ['ejecutarPruebasPocPruebasPost'] as const;
+
+export const getEjecutarPruebasPocPruebasPostMutationOptions = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof ejecutarPruebasPocPruebasPost>>, TError,EjecutarPruebasPocPruebasPostMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+): UseMutationOptions<Awaited<ReturnType<typeof ejecutarPruebasPocPruebasPost>>, TError,EjecutarPruebasPocPruebasPostMutationVariables, TContext> => {
+
+const mutationKey = getEjecutarPruebasPocPruebasPostMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof ejecutarPruebasPocPruebasPost>>, EjecutarPruebasPocPruebasPostMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  ejecutarPruebasPocPruebasPost(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type EjecutarPruebasPocPruebasPostMutationResult = NonNullable<Awaited<ReturnType<typeof ejecutarPruebasPocPruebasPost>>>
+    export type EjecutarPruebasPocPruebasPostMutationBody = PruebasPeticion
+    export type EjecutarPruebasPocPruebasPostMutationError = HTTPValidationError
+    export type EjecutarPruebasPocPruebasPostMutationVariables = {data: PruebasPeticion}
+
+    /**
+ * @summary Ejecutar Pruebas
+ */
+export const useEjecutarPruebasPocPruebasPost = <TError = HTTPValidationError,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof ejecutarPruebasPocPruebasPost>>, TError,EjecutarPruebasPocPruebasPostMutationVariables, TContext>, request?: SecondParameter<typeof apiClient>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof ejecutarPruebasPocPruebasPost>>,
+        TError,
+        EjecutarPruebasPocPruebasPostMutationVariables,
+        TContext
+      > => {
+      return useMutation(getEjecutarPruebasPocPruebasPostMutationOptions(options), queryClient);
     }
