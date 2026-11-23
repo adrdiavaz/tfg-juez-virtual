@@ -2,7 +2,6 @@
 
 from collections.abc import AsyncIterator
 
-import httpx
 import pytest
 
 from app.core.config import settings
@@ -23,17 +22,7 @@ DOBLE = {
 }
 
 
-@pytest.fixture(scope="module", autouse=True)
-def _go_judge_disponible() -> None:
-    headers = (
-        {"Authorization": f"Bearer {settings.go_judge_auth_token}"}
-        if settings.go_judge_auth_token
-        else {}
-    )
-    try:
-        httpx.get(f"{settings.go_judge_url}/version", headers=headers, timeout=2).raise_for_status()
-    except httpx.HTTPError:
-        pytest.skip("go-judge no está disponible", allow_module_level=True)
+pytestmark = pytest.mark.usefixtures("go_judge_disponible")
 
 
 @pytest.fixture
