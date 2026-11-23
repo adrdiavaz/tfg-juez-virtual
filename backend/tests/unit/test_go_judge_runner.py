@@ -7,8 +7,9 @@ import pytest
 from app.integrations.go_judge.client import GoJudgeClient
 from app.integrations.go_judge.dto.result import Status
 from app.integrations.go_judge.exceptions import GoJudgeError
+from app.integrations.go_judge.frameworks import Framework
 from app.integrations.go_judge.languages import Language
-from app.integrations.go_judge.runner import run_program
+from app.integrations.go_judge.runner import run_program, run_tests
 
 
 def _ok(file_ids: dict[str, str] | None = None) -> dict[str, object]:
@@ -121,3 +122,44 @@ async def test_compilacion_sin_artefacto_lanza_go_judge_error() -> None:
 
     with pytest.raises(GoJudgeError):
         await run_program(_client(servidor), Language.C, "x", "", 1000, 64)
+
+
+async def test_run_tests_copia_alumno_y_tests_y_recoge_el_informe() -> None:
+    respuesta = {**_ok(), "files": {"stdout": "", "report.xml": "<testsuites/>"}}
+    servidor = _Servidor([httpx.Response(200, json=[respuesta])])
+    tests = {"test_solucion.py": "from solucion import f"}
+
+    resultado = await run_tests(_client(servidor), Framework.PYTEST, "def f(): 1", tests, 1000, 64)
+
+    assert resultado.report == "<testsuites/>"
+    cmd = servidor.cmd(0)
+    assert cmd["copyIn"] == {
+        "test_solucion.py": {"content": "from solucion import f"},
+        "solucion.py": {"content": "def f(): 1"},
+    }
+    assert cmd["copyOut"] == ["report.xml?"]
+    # Al límite de la actividad se suma el coste de arrancar pytest
+    assert cmd["cpuLimit"] == 1_300_000_000
+    assert cmd["memoryLimit"] == 96 * 1024 * 1024
+
+
+async def test_run_tests_sin_informe_devuelve_none() -> None:
+    servidor = _Servidor(
+        [httpx.Response(200, json=[{"status": "Time Limit Exceeded", "exitStatus": 9}])]
+    )
+
+    resultado = await run_tests(
+        _client(servidor), Framework.PYTEST, "", {"test_a.py": ""}, 1000, 64
+    )
+
+    assert resultado.run.status is Status.TIME_LIMIT_EXCEEDED
+    assert resultado.report is None
+
+
+async def test_run_tests_no_deja_que_un_test_pise_al_alumno() -> None:
+    servidor = _Servidor([])
+
+    with pytest.raises(ValueError):
+        await run_tests(_client(servidor), Framework.PYTEST, "", {"solucion.py": ""}, 1000, 64)
+
+    assert servidor.rutas == []

@@ -5,6 +5,7 @@ from app.integrations.go_judge.client import GoJudgeClient
 from app.integrations.go_judge.dto.request import Cmd, Collector, MemoryFile, PreparedFile
 from app.integrations.go_judge.dto.result import Result, Status
 from app.integrations.go_judge.exceptions import GoJudgeError
+from app.integrations.go_judge.frameworks import FRAMEWORKS, Framework
 from app.integrations.go_judge.languages import LANGUAGES, Language, LanguageSpec
 
 _NS_PER_MS = 1_000_000
@@ -96,3 +97,44 @@ async def run_program(
             # mejor eso que ocultar el resultado o el error original
             with contextlib.suppress(GoJudgeError):
                 await client.delete_file(artifact_id)
+
+
+@dataclass(frozen=True)
+class SuiteExecution:
+    run: Result
+    # Informe JUnit XML sin interpretar; None si el proceso murió antes de escribirlo
+    report: str | None
+
+
+async def run_tests(
+    client: GoJudgeClient,
+    framework: Framework,
+    student_source: str,
+    tests: dict[str, str],
+    time_limit_ms: int,
+    memory_limit_mb: int,
+) -> SuiteExecution:
+    """Ejecuta la suite `tests` (nombre -> contenido) contra el código del alumno."""
+    spec = FRAMEWORKS[framework]
+    if spec.student_file in tests:
+        raise ValueError(f"los tests no pueden llamarse {spec.student_file}")
+    cpu_limit = (time_limit_ms + spec.cpu_overhead_ms) * _NS_PER_MS
+    copy_in: dict[str, MemoryFile | PreparedFile] = {
+        name: MemoryFile(content=content) for name, content in tests.items()
+    }
+    copy_in[spec.student_file] = MemoryFile(content=student_source)
+    cmd = Cmd(
+        args=spec.run_args,
+        env=spec.env,
+        files=_output_files(""),
+        cpu_limit=cpu_limit,
+        clock_limit=2 * cpu_limit,
+        memory_limit=(memory_limit_mb + spec.memory_overhead_mb) * _MIB,
+        proc_limit=spec.proc_limit,
+        copy_in=copy_in,
+        # "?" lo hace opcional: si salta un límite no hay informe y go-judge no debe fallar
+        copy_out=[f"{spec.report_path}?"],
+        copy_out_max=_OUTPUT_MAX,
+    )
+    [run] = await client.run([cmd])
+    return SuiteExecution(run=run, report=(run.files or {}).get(spec.report_path))

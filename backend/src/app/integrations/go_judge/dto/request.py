@@ -32,4 +32,6 @@ class Cmd(_Dto):
     proc_limit: int | None = None
     copy_in: dict[str, MemoryFile | PreparedFile] | None = None
     copy_out: list[str] | None = None
+    # Bytes máximos de cada fichero de copy_out
+    copy_out_max: int | None = None
     copy_out_cached: list[str] | None = None
