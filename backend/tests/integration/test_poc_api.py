@@ -69,3 +69,11 @@ async def test_convierte_unidades_y_salidas(monkeypatch: pytest.MonkeyPatch) -> 
             "stderr": "",
         },
     }
+
+
+@pytest.mark.parametrize("nombre", ["../x.py", "sub/test_a.py", "test_a.txt", "solucion.py"])
+async def test_pruebas_rechaza_nombres_de_test_invalidos(nombre: str) -> None:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        response = await client.post("/poc/pruebas", json={"codigo": "", "tests": {nombre: ""}})
+
+    assert response.status_code == 422
