@@ -5,13 +5,20 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './accountStatus';
 export * from './activationInfo';
 export * from './activationInfoAuthActivationGetParams';
 export * from './hTTPValidationError';
+export * from './invitationResult';
+export * from './listTeachersTeachersGetParams';
 export * from './loginRequest';
 export * from './newPassword';
 export * from './passwordResetRequest';
 export * from './role';
+export * from './teacherIn';
+export * from './teacherOut';
+export * from './teacherPage';
+export * from './teacherSaved';
 export * from './userPublic';
 export * from './validationError';
 export * from './validationErrorCtx';
