@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.db.database import engine
 from app.modules.auth.router import router as auth_router
+from app.modules.teacher.router import router as teacher_router
 
 
 @asynccontextmanager
@@ -24,3 +25,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(auth_router)
+app.include_router(teacher_router)
