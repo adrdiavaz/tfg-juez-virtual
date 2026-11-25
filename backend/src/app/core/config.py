@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     smtp_password: str | None = None
     smtp_starttls: bool = False
     mail_from: str = "Juez virtual <no-reply@juez-virtual.local>"
+    admin_username: str | None = None
+    admin_email: str | None = None
+    admin_password: str | None = None
 
 
 settings = Settings()  # type: ignore
